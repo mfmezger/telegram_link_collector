@@ -50,13 +50,14 @@ def sync_unsynced_links(db: Database, karakeep: KaraKeepClient, *, batch_size: i
     rows = db.unsynced_links(limit=batch_size)
 
     for row in rows:
+        if row.id is None:
+            continue
         stats.attempted += 1
-        ok, status = karakeep.upload_link(url=str(row["url"]), note=row["note"])
+        ok, status = karakeep.upload_link(url=row.url, note=row.note)
         if ok:
-            db.mark_link_synced(link_id=int(row["id"]), status=status)
+            db.mark_link_synced(link_id=row.id, status=status)
             stats.synced += 1
         else:
             stats.failed += 1
 
     return stats
-
