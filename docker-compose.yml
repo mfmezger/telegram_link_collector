@@ -1,0 +1,12 @@
+services:
+  telegram-link-collector:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: telegram-link-collector
+    env_file:
+      - .env
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+    command: ["telegram-link-collector", "run-service"]
